@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="pt-BR">
-      <body className={rubik.className}>{children}</body>
+      <body className={`${rubik.className} bg-black text-white`}>{children}</body>
     </html>
   );
 }
