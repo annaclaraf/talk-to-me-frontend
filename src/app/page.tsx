@@ -1,10 +1,13 @@
 import Header from "@/components/Header"
+import { FormWrapper } from "@/components/FormWrapper"
 
 export default function Home() {
   return (
-    <div>
+    <main className="min-h-screen flex flex-col">
       <Header />
-      <h1>Talk to me!</h1>
-    </div>
+      <div className="flex flex-1 items-center justify-center mx-auto w-full h-full">
+        <FormWrapper />
+      </div>
+    </main>
   );
 }
