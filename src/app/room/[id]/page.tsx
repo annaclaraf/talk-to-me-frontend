@@ -45,7 +45,7 @@ export default function Room({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
-        <Chat />
+        <Chat roomId={params.id} />
       </div>
       <Footer />
     </div>
