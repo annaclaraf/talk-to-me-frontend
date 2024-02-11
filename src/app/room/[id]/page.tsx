@@ -5,6 +5,11 @@ import { Chat } from "@/components/Chat";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
+interface IAnswer {
+  sender: string;
+  description: RTCSessionDescriptionInit;
+}
+
 import { SocketContext } from "@/contexts/SocketContext";
 
 export default function Room({ params }: { params: { id: string } }) {
@@ -23,7 +28,7 @@ export default function Room({ params }: { params: { id: string } }) {
     });
 
     socket?.on("new user", data => {
-      createPeerConnection(data.socketId);
+      createPeerConnection(data.socketId, false);
 
       socket.emit("new user connected", {
         to: data.socketId,
@@ -32,15 +37,53 @@ export default function Room({ params }: { params: { id: string } }) {
     });
 
     socket?.on("new user connected", data => {
-      createPeerConnection(data.sender)
+      createPeerConnection(data.sender, true);
+    });
+
+    socket?.on("sdp", data => {
+      handleAnswer(data);
     });
   }, [socket]);
 
-  function createPeerConnection(socketId: string) {
+  async function createPeerConnection(socketId: string, createOffer?: boolean) {
     const config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
     const peer = new RTCPeerConnection(config);
     peerConnections.current[socketId] = peer;
+
+    if (createOffer) {
+      const peerConnection = peerConnections.current[socketId];
+
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+
+      socket?.emit('sdp', {
+        to: socketId,
+        sender: socket?.id,
+        description: peerConnection.localDescription,
+      });
+    }
   }
+
+  async function handleAnswer(data: IAnswer){
+    const peerConnection = peerConnections.current[data.sender];
+
+    if (data.description.type === 'offer') {
+      await peerConnection.setRemoteDescription(data.description);
+
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+
+      socket?.emit('sdp', {
+        to: data.sender,
+        sender: socket?.id,
+        description: peerConnection.localDescription,
+      });
+    } else if (data.description.type === 'answer') {
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(data.description),
+      );
+    }
+  };
 
   async function initCamera() {
     const video = await navigator.mediaDevices.getUserMedia({
