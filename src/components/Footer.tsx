@@ -7,9 +7,10 @@ interface IFooter {
   localStream: MediaStream | null;
   peerConnections:  MutableRefObject<Record<string, RTCPeerConnection>>;
   userCam: MutableRefObject<HTMLVideoElement | null>;
+  logout: () => void;
 };
 
-export default function Footer({localStream, peerConnections, userCam}: IFooter) {
+export default function Footer({localStream, peerConnections, userCam, logout}: IFooter) {
   const [isMuted, setIsMuted] = useState(false);
   const [isCameraOff, setIsCameraOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -113,7 +114,7 @@ export default function Footer({localStream, peerConnections, userCam}: IFooter)
               <Computer className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md" onClick={toggleScreenSharing} />
             }
 
-            <Phone className="w-16 h-12 p-2 cursor-pointer bg-primary hover:bg-red-500 rounded-md" />
+            <Phone className="w-16 h-12 p-2 cursor-pointer bg-primary hover:bg-red-500 rounded-md" onClick={logout} />
           </div>
         </div>
       </Container>

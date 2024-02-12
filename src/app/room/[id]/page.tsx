@@ -106,13 +106,30 @@ export default function Room({ params }: { params: { id: string } }) {
       });
     };
 
-    peer.onicecandidate = event => {
+    peerConnection.onicecandidate = event => {
       if (event.candidate) {
         socket?.emit("ice candidates", {
           to: socketId,
           sender: socket.id,
           candidate: event.candidate,
         });
+      }
+    };
+
+    peerConnection.onsignalingstatechange = event => {
+      if (peerConnection.signalingState === "closed") {
+        setRemoteStreams((prevState) =>
+          prevState.filter((stream) => stream.id !== socketId),
+        );
+      }
+    };
+
+    peerConnection.onconnectionstatechange = event => {
+      const statuses = ["closed", "disconnected", "failed"];
+      if (statuses.includes(peerConnection.connectionState)) {
+        setRemoteStreams((prevState) =>
+          prevState.filter((stream) => stream.id !== socketId),
+        );
       }
     };
   }
@@ -162,6 +179,17 @@ export default function Room({ params }: { params: { id: string } }) {
     return video;
   }
 
+  function logout() {
+    localStream?.getTracks().forEach(track => {
+      track.stop();
+    });
+    Object.values(peerConnections.current).forEach(peerConnection =>
+      peerConnection.close(),
+    );
+    socket?.disconnect();
+    window.location.href = `/`;
+  }
+
   return (
     <div className="h-screen">
       <Header />
@@ -201,6 +229,7 @@ export default function Room({ params }: { params: { id: string } }) {
         localStream={localStream}
         peerConnections={peerConnections}
         userCam={userCam}
+        logout={logout}
       />
     </div>
   );
