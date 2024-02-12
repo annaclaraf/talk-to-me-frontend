@@ -20,6 +20,7 @@ interface ICandidate {
 interface IDataStream {
   id: string;
   stream: MediaStream;
+  username: string;
 }
 
 export default function Room({ params }: { params: { id: string } }) {
@@ -31,25 +32,28 @@ export default function Room({ params }: { params: { id: string } }) {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
+    const username = sessionStorage.getItem('username');
     socket?.on("connect", async () => {
       socket?.emit("subscribe", { 
         roomId: params.id,
-        socketId: socket.id
+        socketId: socket.id,
+        username: username
       });
       await initLocalCamera();
     });
 
     socket?.on("new user", data => {
-      createPeerConnection(data.socketId, false);
+      createPeerConnection(data.socketId, false, data.username);
 
       socket.emit("new user connected", {
         to: data.socketId,
         sender: socket.id,
+        username: username
       });
     });
 
     socket?.on("new user connected", data => {
-      createPeerConnection(data.sender, true);
+      createPeerConnection(data.sender, true, data.username);
     });
 
     socket?.on("sdp", data => {
@@ -61,7 +65,7 @@ export default function Room({ params }: { params: { id: string } }) {
     });
   }, [socket]);
 
-  async function createPeerConnection(socketId: string, createOffer?: boolean) {
+  async function createPeerConnection(socketId: string, createOffer?: boolean, username?: string) {
     const config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
     const peer = new RTCPeerConnection(config);
     peerConnections.current[socketId] = peer;
@@ -95,7 +99,8 @@ export default function Room({ params }: { params: { id: string } }) {
 
       const dataStream: IDataStream = {
         id: socketId,
-        stream: remoteStream
+        stream: remoteStream,
+        username: username as string
       };
 
       setRemoteStreams((prevState: IDataStream[]) => {
@@ -201,9 +206,8 @@ export default function Room({ params }: { params: { id: string } }) {
                 className="h-full w-full"
                 ref={userCam}
                 autoPlay
-                playsInline
               />
-              <span className="absolute bottom-3">Anna Clara</span>
+              <span className="absolute bottom-3">{sessionStorage.getItem("username")}</span>
             </div>
 
             {remoteStreams.map((stream, index) => {
@@ -217,7 +221,7 @@ export default function Room({ params }: { params: { id: string } }) {
                     }}
                     autoPlay
                   />
-                  <span className="absolute bottom-3">Clara</span>
+                  <span className="absolute bottom-3">{stream.username}</span>
                 </div>
               );
             })}

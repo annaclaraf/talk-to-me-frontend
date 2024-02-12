@@ -16,6 +16,8 @@ export function Chat({ roomId }: { roomId: string }) {
   const [chat, setChat] = useState<IChatMessage[]>([]);
   const currentMsg = useRef<HTMLInputElement>(null);
 
+  const username = sessionStorage.getItem("username");
+
   useEffect(() => {
     socket?.on('chat', (data) => {
       setChat((prevState) => [...prevState, data]);
@@ -28,7 +30,7 @@ export function Chat({ roomId }: { roomId: string }) {
     if (currentMsg.current && currentMsg.current?.value !== '') {
       const sendMsgToServer = {
         message: currentMsg.current.value,
-        username: 'Anna Clara',
+        username: username as string,
         roomId,
         time: new Date().toLocaleTimeString(),
       };
