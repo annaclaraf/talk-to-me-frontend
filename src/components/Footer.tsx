@@ -6,9 +6,10 @@ import Container from './Container';
 interface IFooter {
   localStream: MediaStream | null;
   peerConnections:  MutableRefObject<Record<string, RTCPeerConnection>>;
+  userCam: MutableRefObject<HTMLVideoElement | null>;
 };
 
-export default function Footer({localStream, peerConnections}: IFooter) {
+export default function Footer({localStream, peerConnections, userCam}: IFooter) {
   const [isMuted, setIsMuted] = useState(false);
   const [isCameraOff, setIsCameraOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -57,6 +58,40 @@ export default function Footer({localStream, peerConnections}: IFooter) {
     });
   }
 
+  async function toggleScreenSharing() {
+    if (!isScreenSharing) {
+      const videoShareScreen = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+      });
+
+      if (userCam.current){
+        userCam.current.srcObject = videoShareScreen
+      };
+
+      Object.values(peerConnections.current).forEach((peerConnections) => {
+        peerConnections.getSenders().forEach((sender) => {
+          if (sender.track?.kind === 'video') {
+            sender.replaceTrack(videoShareScreen.getVideoTracks()[0]);
+          }
+        });
+      });
+
+      setIsScreenSharing(!isScreenSharing);
+      return;
+    }
+
+    if (userCam.current) userCam.current.srcObject = localStream;
+
+    Object.values(peerConnections.current).forEach((peerConnections) => {
+      peerConnections.getSenders().forEach((sender) => {
+        if (sender.track?.kind === 'video') {
+          sender.replaceTrack(localStream && localStream?.getVideoTracks()[0]);
+        }
+      });
+    });
+    setIsScreenSharing(!isScreenSharing);
+  }
+
   return (
     <div className="fixed bottom-0 bg-black py-6 w-full">
       <Container>
@@ -74,8 +109,8 @@ export default function Footer({localStream, peerConnections}: IFooter) {
               <Camera className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md" onClick={toggleVideo} />
             }
             {isScreenSharing ? 
-              <NoComputer className="w-16 h-12 p-2 cursor-pointer bg-red-500 rounded-md" onClick={() => setIsScreenSharing(!isScreenSharing)} /> : 
-              <Computer className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md" onClick={() => setIsScreenSharing(!isScreenSharing)} />
+              <NoComputer className="w-16 h-12 p-2 cursor-pointer bg-red-500 rounded-md" onClick={toggleScreenSharing} /> : 
+              <Computer className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md" onClick={toggleScreenSharing} />
             }
 
             <Phone className="w-16 h-12 p-2 cursor-pointer bg-primary hover:bg-red-500 rounded-md" />

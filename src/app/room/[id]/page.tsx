@@ -200,6 +200,7 @@ export default function Room({ params }: { params: { id: string } }) {
       <Footer
         localStream={localStream}
         peerConnections={peerConnections}
+        userCam={userCam}
       />
     </div>
   );
