@@ -1,5 +1,6 @@
 import { SocketProvider } from "@/contexts/SocketContext";
 import type { Metadata } from "next";
+import Head from "next/head";
 import { Rubik } from "next/font/google";
 import "./globals.css";
 
@@ -13,6 +14,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="pt-BR">
+      <Head>
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </Head>
       <body className={`${rubik.className} bg-black text-white`}>
         <SocketProvider>
           {children}
