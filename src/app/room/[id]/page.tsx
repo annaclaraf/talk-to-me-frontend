@@ -203,7 +203,7 @@ export default function Room({ params }: { params: { id: string } }) {
           <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
             <div className="bg-gray-950 w-full rounded-md h-full p-2 relative">
               <video
-                className="h-full w-full"
+                className="h-full w-full -scale-x-100"
                 ref={userCam}
                 autoPlay
               />
