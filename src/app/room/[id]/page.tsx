@@ -234,6 +234,7 @@ export default function Room({ params }: { params: { id: string } }) {
         peerConnections={peerConnections}
         userCam={userCam}
         logout={logout}
+        initLocalCamera={initLocalCamera}
       />
     </div>
   );

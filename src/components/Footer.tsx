@@ -8,9 +8,10 @@ interface IFooter {
   peerConnections:  MutableRefObject<Record<string, RTCPeerConnection>>;
   userCam: MutableRefObject<HTMLVideoElement | null>;
   logout: () => void;
+  initLocalCamera: () => void;
 };
 
-export default function Footer({localStream, peerConnections, userCam, logout}: IFooter) {
+export default function Footer({localStream, peerConnections, userCam, logout, initLocalCamera}: IFooter) {
   const [isMuted, setIsMuted] = useState(false);
   const [isCameraOff, setIsCameraOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -43,6 +44,11 @@ export default function Footer({localStream, peerConnections, userCam, logout}: 
   function toggleVideo() {
     localStream?.getVideoTracks().forEach(track => {
       track.enabled = !track.enabled;
+      if (!track.enabled) {
+        track.stop();
+      } else {
+        initLocalCamera();
+      }
     });
     setIsCameraOff(!isCameraOff);
 
