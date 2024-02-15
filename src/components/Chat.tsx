@@ -68,13 +68,14 @@ export function Chat({ roomId }: { roomId: string }) {
               ref={currentMsg}
               className="px-3 py-2 bg-gray-950 rounded-md w-full"
             />
-            <Image
-              className="absolute right-2 top-2.5 cursor-pointer"
-              src="/send.png"
-              width={20}
-              height={20}
-              alt="Send"
-            />
+            <button type="submit" className="absolute -translate-x-[50%] -translate-y-[50%] right-0 top-[50%] cursor-pointer">
+              <Image
+                src="/send.png"
+                width={20}
+                height={200}
+                alt="Send"
+              />
+            </button>
           </div>
         </form>
       </div>
