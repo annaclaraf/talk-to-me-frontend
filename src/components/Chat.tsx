@@ -43,7 +43,7 @@ export function Chat({ roomId }: { roomId: string }) {
   }
 
   return (
-    <div className="bg-gray-900 px-4 pt-4 md:w-[15%] hidden md:flex rounded-md m-3 h-full">
+    <div className="bg-gray-900 p-4 max-w-[370px] w-[30%] hidden md:flex rounded-md h-full">
       <div className="relative h-full w-full">
         {chat.map((chat, index) => {
           return (
@@ -59,7 +59,7 @@ export function Chat({ roomId }: { roomId: string }) {
           );
         })}
 
-        <form onSubmit={(e) => sendMessage(e)} className="absolute bottom-2 w-full">
+        <form onSubmit={(e) => sendMessage(e)} className="absolute bottom-0 w-full">
           <div className="flex relative ">
             <input
               type="text"

@@ -100,27 +100,29 @@ export default function Footer({localStream, peerConnections, userCam, logout, i
   }
 
   return (
-    <div className="fixed bottom-0 bg-black py-6 w-full">
+    <div className="fixed bottom-0 bg-black py-[10px] w-full border-t-[1px] border-white">
       <Container>
-        <div className="grid grid-cols-3">
-          <div className="flex items-center justify-center">
-            <span className="text-xl">{hours + minutes}</span>
-          </div>
-          <div className="flex justify-center space-x-4">
-            {isMuted ? 
-              <NoMic className="w-16 h-12 p-2 cursor-pointer bg-red-500 rounded-md" onClick={toggleMuted} /> : 
-              <Mic className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md" onClick={toggleMuted} />
-            }
-            {isCameraOff ? 
-              <NoCamera className="w-16 h-12 cursor-pointer bg-red-500 rounded-md" onClick={toggleVideo} /> : 
-              <Camera className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md" onClick={toggleVideo} />
-            }
-            {isScreenSharing ? 
-              <NoComputer className="w-16 h-12 p-2 cursor-pointer bg-red-500 rounded-md" onClick={toggleScreenSharing} /> : 
-              <Computer className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md" onClick={toggleScreenSharing} />
-            }
+        <div className="w-full min-h-[73px] flex items-center">
+          <div className="flex flex-wrap justify-center md:justify-start gap-[5px] w-full">
+            <div className="flex items-center justify-center md:justify-start w-[33%]">
+              <span className="text-xl">{hours + minutes}</span>
+            </div>
+            <div className="flex justify-center space-x-4 flex-1 md:flex-[unset] md:w-[33%]">
+              {isMuted ? 
+                <NoMic className="w-16 h-12 p-2 cursor-pointer bg-red-500 rounded-md shrink-0" onClick={toggleMuted} /> : 
+                <Mic className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md shrink-0" onClick={toggleMuted} />
+              }
+              {isCameraOff ? 
+                <NoCamera className="w-16 h-12 cursor-pointer bg-red-500 rounded-md shrink-0" onClick={toggleVideo} /> : 
+                <Camera className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md shrink-0" onClick={toggleVideo} />
+              }
+              {isScreenSharing ? 
+                <NoComputer className="w-16 h-12 p-2 cursor-pointer bg-red-500 rounded-md shrink-0" onClick={toggleScreenSharing} /> : 
+                <Computer className="w-16 h-12 p-2 cursor-pointer bg-gray-950 rounded-md shrink-0" onClick={toggleScreenSharing} />
+              }
 
-            <Phone className="w-16 h-12 p-2 cursor-pointer bg-primary hover:bg-red-500 rounded-md" onClick={logout} />
+              <Phone className="w-16 h-12 p-2 cursor-pointer bg-primary hover:bg-red-500 rounded-md shrink-0" onClick={logout} />
+            </div>
           </div>
         </div>
       </Container>

@@ -198,12 +198,12 @@ export default function Room({ params }: { params: { id: string } }) {
   return (
     <div className="h-screen">
       <Header />
-      <div className="flex h-[80%]">
-        <div className="md:w-[85%] w-full m-3">
-          <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
-            <div className="bg-gray-950 w-full rounded-md h-full p-2 relative">
+      <div className="flex h-[82%] p-4 space-x-4">
+        <div className="flex-1 h-full w-full overflow-auto">
+          <div className="flex flex-wrap justify-center gap-5 mb-5">
+            <div className="bg-gray-950 flex-auto max-w-[600px] max-h-[300px] rounded-md p-2 relative">
               <video
-                className="h-full w-full -scale-x-100"
+                className="h-full w-full -scale-x-100 object-cover"
                 ref={userCam}
                 autoPlay
               />
@@ -212,9 +212,9 @@ export default function Room({ params }: { params: { id: string } }) {
 
             {remoteStreams.map((stream, index) => {
               return (
-                <div className="bg-gray-950 w-full rounded-md h-full p-2 relative" key={index}>
+                <div className="bg-gray-950 flex-auto max-w-[600px] max-h-[300px] rounded-md p-2 relative" key={index}>
                   <video
-                    className="h-full w-full"
+                    className="h-full w-full object-cover"
                     ref={(video) => {
                       if (video && video.srcObject !== stream.stream)
                       video.srcObject = stream.stream;
